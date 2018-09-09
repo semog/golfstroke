@@ -13,33 +13,37 @@ class DbProvider {
   Future<DbProvider> open() async {
     // Get a location using getDatabasesPath
     String fulldbpath = join(await getDatabasesPath(), databaseStrokeCounts);
-    print("fulldbpath = $fulldbpath");
     _db = await openDatabase(fulldbpath, version: 1, onCreate: createDb, onUpgrade: upgradeDb);
     return this;
   }
 
   createDb(Database db, int version) {
     db.execute('''create table $tableRound (
-  $columnRoundId integer primary key,
-  $columnRoundCourseId integer not null,
-  $columnRoundDate text not null)''');
+$columnRoundId integer primary key,
+$columnRoundCourseId integer not null,
+$columnRoundDate text not null,
+$columnRoundCurrentHole integer not null)''');
 
     db.execute('''create table $tableLastRound (
-  $columnLastRoundId integer primary key,
-  $columnLastRoundRoundId integer not null)''');
+$columnLastRoundId integer primary key,
+$columnLastRoundRoundId integer not null)''');
 
     db.execute('''create table $tableHole (
-  $columnHoleId integer primary key,
-  $columnHoleRoundId integer not null,
-  $columnHoleHole integer not null,
-  $columnHoleStrokeCount integer not null)''');
+$columnHoleId integer primary key,
+$columnHoleRoundId integer not null,
+$columnHoleHole integer not null,
+$columnHoleStrokeCount integer not null)''');
 
     db.execute("create index $indexHoleRoundHole on $tableHole ($columnHoleRoundId, $columnHoleHole)");
-    print("created NEW database");
   }
 
   upgradeDb(Database db, int oldVersion, int newVersion) {
-    // TODO: Implement any upgrades from old versions.
+    // Perform any upgrades from old versions.
+    if (1 == oldVersion && 2 == newVersion) {
+      // Do updates as needed
+    } else if (2 == oldVersion && 3 == newVersion) {
+      // Do updates as needed
+    }
   }
 
   Future close() => _db.close();
@@ -63,11 +67,14 @@ class DbProvider {
 
   Future<Round> getRound(int id) async {
     List<Map<String, dynamic>> maps = await _db.query(tableRound,
-        columns: [columnRoundId, columnRoundDate, columnRoundCourseId], where: "$columnRoundId = ?", whereArgs: [id]);
+        columns: [columnRoundId, columnRoundDate, columnRoundCourseId, columnRoundCurrentHole],
+        where: "$columnRoundId = ?",
+        whereArgs: [id]);
     Round round;
     if (maps.length > 0) {
       round = Round.fromMap(maps.first);
       round.holes = await _getHoles(round);
+      round.setCurrentHole();
     }
     return round;
   }

@@ -11,7 +11,10 @@ class Hole implements IMappable {
   int hole;
   int _strokes;
   int get strokes => _strokes;
-  set strokes(int newStrokes) => _strokes = max(newStrokes, 0);
+  set strokes(int newStrokes) {
+    _strokes = max(newStrokes, 0);
+    save();
+  }
 
   Hole(int ownerRoundId, int holeNum) {
     id = getId();
@@ -24,10 +27,14 @@ class Hole implements IMappable {
     id = map[columnHoleId];
     roundId = map[columnHoleRoundId];
     hole = map[columnHoleHole];
-    strokes = map[columnHoleStrokeCount];
+    _strokes = map[columnHoleStrokeCount];
   }
 
   Map<String, dynamic> toMap() {
-    return {columnHoleId: id, columnHoleRoundId: roundId, columnHoleHole: hole, columnHoleStrokeCount: strokes};
+    return {columnHoleId: id, columnHoleRoundId: roundId, columnHoleHole: hole, columnHoleStrokeCount: _strokes};
+  }
+
+  void save() {
+    appDb.updateItem(this);
   }
 }

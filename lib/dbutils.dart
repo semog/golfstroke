@@ -14,6 +14,7 @@ final String columnRoundDate = "date";
 final String tableLastRound = "lastround";
 final String columnLastRoundId = "_id";
 final String columnLastRoundRoundId = "roundId";
+final String columnRoundCurrentHole = "currentHole";
 
 final String tableHole = "holes";
 final String columnHoleId = "_id";
