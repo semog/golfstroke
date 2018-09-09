@@ -45,63 +45,61 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
     if (!_loadData()) {
       return loadingScreen;
     }
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.chevron_left),
-                    iconSize: 50.0,
-                    color: Colors.green[200],
-                    onPressed: _decrementStrokes,
-                  ),
-                  Text(
-                    '${round.currentStrokeCount}',
-                    style: TextStyle(fontSize: 70.0, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.chevron_right),
-                    iconSize: 50.0,
-                    color: Colors.green,
-                    onPressed: _incrementStrokes,
-                  ),
-                ],
+    return Dismissible(
+      key: Key(round.currentHole.hashCode.toString()),
+      direction: DismissDirection.vertical,
+      onDismissed: (direction) {
+        if (DismissDirection.up == direction) {
+          _nextHole();
+        } else if (DismissDirection.down == direction) {
+          _previousHole();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text(
+                      fmtHoleNum(round.currentHoleNum),
+                      style: TextStyle(fontSize: 25.0, color: Colors.blueGrey[300]),
+                    ),
+                    Text(
+                      'Hole',
+                      style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
+                    ),
+                  ],
+                ),
+              ]),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.expand_more),
+                      iconSize: 40.0,
+                      color: Colors.green[200],
+                      onPressed: _decrementStrokes,
+                    ),
+                    Text(
+                      '${round.currentStrokeCount}',
+                      style: TextStyle(fontSize: 70.0, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.expand_less),
+                      iconSize: 60.0,
+                      color: Colors.green,
+                      onPressed: _incrementStrokes,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.chevron_left),
-                iconSize: 50.0,
-                color: Colors.blue[300],
-                onPressed: _previousHole,
-              ),
-              Column(
-                children: <Widget>[
-                  Text(
-                    fmtHoleNum(round.currentHoleNum),
-                    style: TextStyle(fontSize: 25.0, color: Colors.blueGrey[300]),
-                  ),
-                  Text(
-                    'Hole',
-                    style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
-                  ),
-                ],
-              ),
-              IconButton(
-                icon: Icon(Icons.chevron_right),
-                iconSize: 50.0,
-                color: Colors.blue,
-                onPressed: _nextHole,
-              ),
-            ]),
-          ],
+            ],
+          ),
         ),
       ),
     );
