@@ -54,6 +54,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
           _nextHole();
         }
       },
+      onTap: () => _incrementStrokes(),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
@@ -107,9 +108,12 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                   ],
                 ),
               ),
-              Text(
-                'Total: ${round.cumulativeStrokeCount}',
-                style: TextStyle(fontSize: 15.0, color: Colors.blueGrey[300]),
+              Padding(
+                padding: EdgeInsets.only(top: _getCumulativePadding()),
+                child: Text(
+                  'Total: ${round.cumulativeStrokeCount}',
+                  style: TextStyle(fontSize: 17.0, color: Colors.blueGrey[300]),
+                ),
               ),
             ],
           ),
@@ -123,6 +127,13 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
       return 21.0;
     }
     return 1.0;
+  }
+
+  double _getCumulativePadding() {
+    if (round.currentStrokeCount > 9) {
+      return 21.0;
+    }
+    return 0.0;
   }
 
   double _getStrokeFontSize() {

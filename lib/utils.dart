@@ -1,9 +1,3 @@
-int sum(List<int> list) {
-  int accumulator = 0;
-  list.forEach((x) => accumulator += x);
-  return accumulator;
-}
-
 int totalMilliseconds(DateTime dt) => dt.difference(DateTime.fromMillisecondsSinceEpoch(0)).inMilliseconds;
 
 String fmtHoleNum(int holeNum) {

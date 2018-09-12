@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:golfstroke/Hole.dart';
 import 'package:golfstroke/IMappable.dart';
 import 'package:golfstroke/constants.dart';
@@ -14,24 +16,16 @@ class Round implements IMappable {
   int _currentHoleIndex = 0;
   int get currentHoleIndex => _currentHoleIndex;
   set currentHoleIndex(int index) {
-    _currentHoleIndex = index;
-    // Wrap the index around the array bounds.
-    if (_currentHoleIndex >= maxHoles) {
-      _currentHoleIndex = 0;
-    } else if (_currentHoleIndex < 0) {
-      _currentHoleIndex = maxHoles - 1;
-    }
+    _currentHoleIndex = min(max(0, index), maxHoles - 1);
     setCurrentHole();
     save();
   }
 
   int get currentStrokeCount => currentHole.strokes;
   int get currentHoleNum => currentHole.hole;
-  int get cumulativeStrokeCount => _sumStrokes(holes, 0, currentHoleIndex + 1);
-
-  int _sumStrokes(List<Hole> list, int startIndex, int stopIndex) {
+  int get cumulativeStrokeCount {
     int accumulator = 0;
-    list.getRange(startIndex, stopIndex).forEach((x) => accumulator += x.strokes);
+    holes.getRange(0, currentHoleIndex + 1).forEach((x) => accumulator += x.strokes);
     return accumulator;
   }
 
