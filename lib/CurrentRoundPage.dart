@@ -12,7 +12,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
   bool _loadedData = false;
   Round round;
 
-  bool get initialized => null != round;
+  bool get _initialized => null != round;
 
   bool _loadData() {
     if (!_loadedData && null != appDb) {
@@ -21,8 +21,12 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
             round = roundArg;
           }));
     }
-    return initialized;
+    return _initialized;
   }
+
+  double get _strokeCountPadding => round.currentStrokeCount > 9 ? 21.0 : 1.0;
+  double get _cumulativePadding => round.currentStrokeCount > 9 ? 21.0 : 0.0;
+  double get _strokeFontSize => round.currentStrokeCount > 9 ? 70.0 : 105.0;
 
   void _incrementStrokes() => setState(() {
         round.currentHole.strokes++;
@@ -54,7 +58,6 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
           _nextHole();
         }
       },
-      onTap: () => _incrementStrokes(),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
@@ -84,7 +87,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                 ]),
               ),
               Padding(
-                padding: EdgeInsets.only(top: _getStrokeCountPadding()),
+                padding: EdgeInsets.only(top: _strokeCountPadding),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -96,8 +99,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                     ),
                     Text(
                       '${round.currentStrokeCount}',
-                      style:
-                          TextStyle(fontSize: _getStrokeFontSize(), fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(fontSize: _strokeFontSize, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     IconButton(
                       icon: Icon(Icons.add_circle_outline),
@@ -109,7 +111,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: _getCumulativePadding()),
+                padding: EdgeInsets.only(top: _cumulativePadding),
                 child: Text(
                   'Total: ${round.cumulativeStrokeCount}',
                   style: TextStyle(fontSize: 17.0, color: Colors.blueGrey[300]),
@@ -120,27 +122,6 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
         ),
       ),
     );
-  }
-
-  double _getStrokeCountPadding() {
-    if (round.currentStrokeCount > 9) {
-      return 21.0;
-    }
-    return 1.0;
-  }
-
-  double _getCumulativePadding() {
-    if (round.currentStrokeCount > 9) {
-      return 21.0;
-    }
-    return 0.0;
-  }
-
-  double _getStrokeFontSize() {
-    if (round.currentStrokeCount > 9) {
-      return 70.0;
-    }
-    return 105.0;
   }
 
   Widget get loadingScreen => Scaffold(

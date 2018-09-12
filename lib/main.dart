@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:golfstroke/CurrentRound.dart';
+import 'package:golfstroke/CurrentRoundPage.dart';
 import 'package:golfstroke/DbProvider.dart';
 import 'package:golfstroke/dbutils.dart';
 
