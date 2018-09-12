@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:golfstroke/Round.dart';
 import 'package:golfstroke/dbutils.dart';
@@ -107,6 +106,10 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                     ),
                   ],
                 ),
+              ),
+              Text(
+                'Total: ${round.cumulativeStrokeCount}',
+                style: TextStyle(fontSize: 15.0, color: Colors.blueGrey[300]),
               ),
             ],
           ),

@@ -27,6 +27,13 @@ class Round implements IMappable {
 
   int get currentStrokeCount => currentHole.strokes;
   int get currentHoleNum => currentHole.hole;
+  int get cumulativeStrokeCount => _sumStrokes(holes, 0, currentHoleIndex + 1);
+
+  int _sumStrokes(List<Hole> list, int startIndex, int stopIndex) {
+    int accumulator = 0;
+    list.getRange(startIndex, stopIndex).forEach((x) => accumulator += x.strokes);
+    return accumulator;
+  }
 
   Round(int ownerCourseId) {
     id = getId();
