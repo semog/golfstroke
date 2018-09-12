@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:golfstroke/Round.dart';
 import 'package:golfstroke/dbutils.dart';
@@ -45,54 +46,63 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
     if (!_loadData()) {
       return loadingScreen;
     }
-    return Dismissible(
+    return GestureDetector(
       key: Key(round.currentHole.hashCode.toString()),
-      direction: DismissDirection.vertical,
-      onDismissed: (direction) {
-        if (DismissDirection.up == direction) {
-          _nextHole();
-        } else if (DismissDirection.down == direction) {
+      onVerticalDragEnd: (details) {
+        if (details.primaryVelocity > 0) {
           _previousHole();
+        } else if (details.primaryVelocity < 0) {
+          _nextHole();
         }
       },
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Text(
-                      fmtHoleNum(round.currentHoleNum),
-                      style: TextStyle(fontSize: 25.0, color: Colors.blueGrey[300]),
-                    ),
-                    Text(
-                      'Hole',
-                      style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
-                    ),
-                  ],
-                ),
-              ]),
-              Expanded(
+              Padding(
+                padding: EdgeInsets.only(top: 10.0),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        fmtHoleNum(round.currentHoleNum),
+                        style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.blueGrey[200]),
+                      ),
+                      Text(
+                        'Hole',
+                        style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.golf_course,
+                    color: Colors.blue[200],
+                    size: 35.0,
+                  ),
+                ]),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: _getStrokeCountPadding()),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.expand_more),
-                      iconSize: 40.0,
-                      color: Colors.green[200],
+                      icon: Icon(Icons.remove_circle_outline),
+                      iconSize: 50.0,
+                      color: Colors.blue[300],
                       onPressed: _decrementStrokes,
                     ),
                     Text(
                       '${round.currentStrokeCount}',
-                      style: TextStyle(fontSize: 70.0, fontWeight: FontWeight.bold, color: Colors.white),
+                      style:
+                          TextStyle(fontSize: _getStrokeFontSize(), fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     IconButton(
-                      icon: Icon(Icons.expand_less),
-                      iconSize: 60.0,
-                      color: Colors.green,
+                      icon: Icon(Icons.add_circle_outline),
+                      iconSize: 50.0,
+                      color: Colors.blue[300],
                       onPressed: _incrementStrokes,
                     ),
                   ],
@@ -103,6 +113,20 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
         ),
       ),
     );
+  }
+
+  double _getStrokeCountPadding() {
+    if (round.currentStrokeCount > 9) {
+      return 21.0;
+    }
+    return 1.0;
+  }
+
+  double _getStrokeFontSize() {
+    if (round.currentStrokeCount > 9) {
+      return 70.0;
+    }
+    return 105.0;
   }
 
   Widget get loadingScreen => Scaffold(
