@@ -23,7 +23,7 @@ class Round implements IMappable {
 
   int get currentStrokeCount => currentHole.strokes;
   int get currentHoleNum => currentHole.hole;
-  int get cumulativeStrokeCount {
+  int get currentScore {
     int accumulator = 0;
     holes.getRange(0, currentHoleIndex + 1).forEach((x) => accumulator += x.strokes);
     return accumulator;
