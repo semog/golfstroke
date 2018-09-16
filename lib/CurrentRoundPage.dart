@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golfstroke/Round.dart';
 import 'package:golfstroke/dbutils.dart';
+import 'package:golfstroke/loadingPage.dart';
 import 'package:golfstroke/utils.dart';
 import 'package:golfstroke/AmbientModeWidget.dart';
 
@@ -52,7 +53,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
   @override
   Widget build(BuildContext context) {
     if (!_loadData()) {
-      return loadingScreen;
+      return loadingPage;
     }
     return GestureDetector(
       key: Key(round.currentHole.hashCode.toString()),
@@ -65,37 +66,36 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: AmbientModeWidget(
-          builder: (context, isAmbient) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              fmtHoleNum(round.currentHoleNum),
-                              style:
-                                  TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.blueGrey[200]),
-                            ),
-                            Text(
-                              'Hole',
-                              style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
-                            ),
-                          ],
-                        ),
-                        Icon(
-                          Icons.golf_course,
-                          color: Colors.blue[200],
-                          size: 35.0,
-                        ),
-                      ]),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: _strokeCountPadding),
-                      child: Row(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 10.0),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        fmtHoleNum(round.currentHoleNum),
+                        style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.blueGrey[200]),
+                      ),
+                      Text(
+                        'Hole',
+                        style: TextStyle(fontSize: 18.0, color: Colors.blueGrey[300]),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.golf_course,
+                    color: Colors.blue[200],
+                    size: 35.0,
+                  ),
+                ]),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: _strokeCountPadding),
+                child: AmbientModeWidget(
+                  builder: (context, isAmbient) => Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           IconButton(
@@ -117,29 +117,19 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: _cumulativePadding),
-                      child: Text(
-                        'Score: ${round.currentScore}',
-                        style: TextStyle(fontSize: 17.0, color: Colors.blueGrey[300]),
-                      ),
-                    ),
-                  ],
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.only(top: _cumulativePadding),
+                child: Text(
+                  'Score: ${round.currentScore}',
+                  style: TextStyle(fontSize: 17.0, color: Colors.blueGrey[300]),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
-  Widget get loadingScreen => Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: Text(
-            "Loading...",
-            style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[300]),
-          ),
-        ),
-      );
 }
