@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:golfstroke/AmbientModeWidget.dart';
+import 'package:golfstroke/AmbientModeState.dart';
 import 'package:golfstroke/database/dbutils.dart';
 import 'package:golfstroke/loadingPage.dart';
 import 'package:golfstroke/model/Round.dart';
@@ -10,11 +10,13 @@ class CurrentRoundPage extends StatefulWidget {
   _CurrentRoundPageState createState() => _CurrentRoundPageState();
 }
 
-class _CurrentRoundPageState extends State<CurrentRoundPage> {
+class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
   bool _loadedData = false;
   Round round;
 
   bool get _initialized => null != round;
+
+  _CurrentRoundPageState() : super.stayOnAmbient();
 
   bool _loadData() {
     if (!_loadedData && null != appDb) {
@@ -32,7 +34,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
 
   final _buttonColor = Colors.blue[300];
 
-  Color _hideableColor(bool isAmbient, Color color) => isAmbient ? Colors.black : color;
+  Color _hideableColor(Color color) => isAmbient ? Colors.black : color;
 
   void _incrementStrokes() => setState(() {
         round.currentHole.strokes++;
@@ -94,29 +96,26 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: _strokeCountPadding),
-                child: AmbientModeWidget(
-                  builder: (context, isAmbient) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.remove_circle_outline),
-                            iconSize: 50.0,
-                            color: _hideableColor(isAmbient, _buttonColor),
-                            onPressed: _decrementStrokes,
-                          ),
-                          Text(
-                            '${round.currentStrokeCount}',
-                            style:
-                                TextStyle(fontSize: _strokeFontSize, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.add_circle_outline),
-                            iconSize: 50.0,
-                            color: _hideableColor(isAmbient, _buttonColor),
-                            onPressed: _incrementStrokes,
-                          ),
-                        ],
-                      ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.remove_circle_outline),
+                      iconSize: 50.0,
+                      color: _hideableColor(_buttonColor),
+                      onPressed: _decrementStrokes,
+                    ),
+                    Text(
+                      '${round.currentStrokeCount}',
+                      style: TextStyle(fontSize: _strokeFontSize, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add_circle_outline),
+                      iconSize: 50.0,
+                      color: _hideableColor(_buttonColor),
+                      onPressed: _incrementStrokes,
+                    ),
+                  ],
                 ),
               ),
               Padding(

@@ -48,6 +48,11 @@ $columnHoleStrokeCount integer not null)''');
 
   Future close() => _db.close();
 
+  Future<List<Round>> getRounds() async {
+    // TODO: Implement
+    return [Round(1)];
+  }
+
   Future<Round> getLastRound() async {
     List<Map<String, dynamic>> maps =
         await _db.query(tableLastRound, columns: [columnLastRoundRoundId], where: "$columnLastRoundId = 0");
