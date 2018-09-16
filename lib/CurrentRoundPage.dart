@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:golfstroke/Round.dart';
 import 'package:golfstroke/dbutils.dart';
 import 'package:golfstroke/utils.dart';
-import 'package:wear/wear.dart';
+import 'package:golfstroke/AmbientModeWidget.dart';
 
 class CurrentRoundPage extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
 
   final _buttonColor = Colors.blue[300];
 
-  Color _hideableColor(Mode mode, Color color) => Mode.ambient == mode ? Colors.black : color;
+  Color _hideableColor(bool isAmbient, Color color) => isAmbient ? Colors.black : color;
 
   void _incrementStrokes() => setState(() {
         round.currentHole.strokes++;
@@ -65,8 +65,8 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: AmbientMode(
-          builder: (context, mode) => Center(
+        body: AmbientModeWidget(
+          builder: (context, isAmbient) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -101,7 +101,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                           IconButton(
                             icon: Icon(Icons.remove_circle_outline),
                             iconSize: 50.0,
-                            color: _hideableColor(mode, _buttonColor),
+                            color: _hideableColor(isAmbient, _buttonColor),
                             onPressed: _decrementStrokes,
                           ),
                           Text(
@@ -112,7 +112,7 @@ class _CurrentRoundPageState extends State<CurrentRoundPage> {
                           IconButton(
                             icon: Icon(Icons.add_circle_outline),
                             iconSize: 50.0,
-                            color: _hideableColor(mode, _buttonColor),
+                            color: _hideableColor(isAmbient, _buttonColor),
                             onPressed: _incrementStrokes,
                           ),
                         ],
