@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:golfstroke/IMappable.dart';
-import 'package:golfstroke/dbutils.dart';
+import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/model/IMappable.dart';
 
 class Hole implements IMappable {
   String tableName = tableHole;

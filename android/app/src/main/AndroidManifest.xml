@@ -17,7 +17,7 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <application android:name="io.flutter.app.FlutterApplication" 
-        android:label="golfstroke" 
+        android:label="Golf Strokes" 
         android:icon="@mipmap/ic_launcher">
 
         <!-- Flags that the app doesn't require a companion phone app -->

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:golfstroke/Hole.dart';
-import 'package:golfstroke/IMappable.dart';
-import 'package:golfstroke/Round.dart';
-import 'package:golfstroke/dbutils.dart';
+import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/model/Hole.dart';
+import 'package:golfstroke/model/IMappable.dart';
+import 'package:golfstroke/model/Round.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

@@ -1,4 +1,4 @@
-import 'package:golfstroke/DbProvider.dart';
+import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/utils.dart';
 
 final String databaseStrokeCounts = "strokecounts.db";

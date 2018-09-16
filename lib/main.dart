@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:golfstroke/CurrentRoundPage.dart';
-import 'package:golfstroke/DbProvider.dart';
-import 'package:golfstroke/dbutils.dart';
+import 'package:golfstroke/database/DbProvider.dart';
+import 'package:golfstroke/database/dbutils.dart';
 
-void main() => runApp(StrokeCountApp());
+void main() => runApp(GolfStrokeApp());
 
-class StrokeCountApp extends StatefulWidget {
-  // This widget is the root of your application.
+class GolfStrokeApp extends StatefulWidget {
   @override
-  _StrokeCountAppState createState() => _StrokeCountAppState();
+  _GolfStrokeAppState createState() => _GolfStrokeAppState();
 }
 
-class _StrokeCountAppState extends State<StrokeCountApp> {
+class _GolfStrokeAppState extends State<GolfStrokeApp> {
   @override
   void initState() {
     super.initState();

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:golfstroke/Round.dart';
-import 'package:golfstroke/dbutils.dart';
-import 'package:golfstroke/loadingPage.dart';
-import 'package:golfstroke/utils.dart';
 import 'package:golfstroke/AmbientModeWidget.dart';
+import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/loadingPage.dart';
+import 'package:golfstroke/model/Round.dart';
+import 'package:golfstroke/utils.dart';
 
 class CurrentRoundPage extends StatefulWidget {
   @override
