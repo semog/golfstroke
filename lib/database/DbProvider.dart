@@ -4,37 +4,44 @@ import 'package:golfstroke/database/dbutils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
 import 'package:golfstroke/model/Round.dart';
+import 'package:golfstroke/model/Setting.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
   Database _db;
+  Setting<int> lastRound;
+  List<Round> rounds;
 
   Future<DbProvider> open() async {
     // Get a location using getDatabasesPath
     String fulldbpath = join(await getDatabasesPath(), databaseStrokeCounts);
     _db = await openDatabase(fulldbpath, version: 1, onCreate: createDb, onUpgrade: upgradeDb);
+    await _loadSettings();
+    await _loadRounds();
     return this;
   }
 
   createDb(Database db, int version) {
+    db.execute('''create table $tableSetting (
+$columnSettingId integer primary key,
+$columnSettingName text not null,
+$columnSettingValue text)''');
+    db.execute("create unique index $indexSettingName on $tableSetting ($columnSettingName)");
+
     db.execute('''create table $tableRound (
 $columnRoundId integer primary key,
-$columnRoundCourseId integer not null,
 $columnRoundDate text not null,
+$columnRoundSlope integer,
+$columnRoundRating integer,
 $columnRoundCurrentHole integer not null)''');
-
-    db.execute('''create table $tableLastRound (
-$columnLastRoundId integer primary key,
-$columnLastRoundRoundId integer not null)''');
 
     db.execute('''create table $tableHole (
 $columnHoleId integer primary key,
 $columnHoleRoundId integer not null,
 $columnHoleHole integer not null,
 $columnHoleStrokeCount integer not null)''');
-
-    db.execute("create index $indexHoleRoundHole on $tableHole ($columnHoleRoundId, $columnHoleHole)");
+    db.execute("create index $indexHoleRoundId on $tableHole ($columnHoleRoundId)");
   }
 
   upgradeDb(Database db, int oldVersion, int newVersion) {
@@ -48,68 +55,89 @@ $columnHoleStrokeCount integer not null)''');
 
   Future close() => _db.close();
 
-  Future<List<Round>> getRounds() async {
-    // TODO: Implement
-    return [Round(1)];
-  }
-
-  Future<Round> getLastRound() async {
-    List<Map<String, dynamic>> maps =
-        await _db.query(tableLastRound, columns: [columnLastRoundRoundId], where: "$columnLastRoundId = 0");
+  Future<Setting<T>> getSetting<T>(String settingname, T defaultVal) async {
+    List<Map<String, dynamic>> maps = await _db.query(tableSetting,
+        columns: [columnSettingId, columnSettingName, columnSettingValue],
+        where: "$columnSettingName = ?",
+        whereArgs: [settingname]);
     if (maps.length > 0) {
-      return getRound(maps.first[columnLastRoundRoundId]);
-    } else {
-      // Initialize the last round.
-      return _insertLastRound(insertRound(Round(1)));
+      return Setting<T>.fromMap(maps.first);
     }
+    return Setting<T>(settingname, defaultVal);
   }
 
-  Round _insertLastRound(Round round) {
-    _db.insert(tableLastRound, {columnLastRoundId: 0, columnLastRoundRoundId: round.id},
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    return round;
+  _loadSettings() async {
+    lastRound = await getSetting(settingLastRound, 0);
   }
 
-  Future<Round> getRound(int id) async {
-    List<Map<String, dynamic>> maps = await _db.query(tableRound,
-        columns: [columnRoundId, columnRoundDate, columnRoundCourseId, columnRoundCurrentHole],
-        where: "$columnRoundId = ?",
-        whereArgs: [id]);
-    Round round;
-    if (maps.length > 0) {
-      round = Round.fromMap(maps.first);
-      round.holes = await _getHoles(round);
-      round.setCurrentHole();
-    }
-    return round;
+  _loadRounds() async {
+    List<Map<String, dynamic>> maps = await _db.query(tableRound, columns: [
+      columnRoundId,
+      columnRoundDate,
+      columnRoundSlope,
+      columnRoundRating,
+      columnRoundCurrentHole,
+    ]);
+    rounds = List<Round>();
+    maps.forEach((record) async {
+      Round round = Round.fromMap(record);
+      rounds.add(round);
+      await _loadHoles(round);
+    });
+  }
+
+  Round getRound(int id) => rounds.firstWhere((round) => round.id == id, orElse: null);
+
+  _loadHoles(Round round) async {
+    round.holes = await _getHoles(round);
+    round.setCurrentHole();
   }
 
   Future<List<Hole>> _getHoles(Round round) async {
     List<Map<String, dynamic>> maps = await _db.query(tableHole,
-        columns: [columnHoleId, columnHoleRoundId, columnHoleHole, columnHoleStrokeCount],
+        columns: [columnHoleId, columnHoleHole, columnHoleStrokeCount],
         where: "$columnHoleRoundId = ? ",
-        whereArgs: [round.id]);
+        whereArgs: [round.id],
+        orderBy: columnHoleHole);
     var holes = List<Hole>();
-    maps.forEach((record) => holes.add(Hole.fromMap(record)));
+    maps.forEach((record) => holes.add(Hole.fromMap(round, record)));
     return holes;
   }
 
-  Round insertRound(Round round) {
-    _db.insert(tableRound, round.toMap());
-    round.holes.forEach((stroke) => _insertHole(stroke));
+  Round createRound() {
+    var round = Round();
+    save(round);
+    round.holes.forEach((hole) => save(hole));
+    rounds.add(round);
     return round;
   }
 
-  Hole _insertHole(Hole hole) {
-    _db.insert(tableHole, hole.toMap());
-    return hole;
+  Future<int> save(IMappable item) {
+    if (null == item.id) {
+      item.id = getId();
+      return _insertItem(item);
+    }
+    return _updateItem(item);
   }
 
-  Future<int> deleteItem(IMappable item) {
-    return _db.delete(item.tableName, where: "${item.idColumnName} = ?", whereArgs: [item.id]);
+  Future<int> _insertItem(IMappable item) {
+    return _db.insert(item.tableName, item.toMap());
   }
 
-  Future<int> updateItem(IMappable item) {
-    return _db.update(item.tableName, item.toMap(), where: "${item.idColumnName} = ?", whereArgs: [item.id]);
+  Future<int> _updateItem(IMappable item) {
+    return _db.update(
+      item.tableName,
+      item.toMap(),
+      where: "${item.idColumnName} = ?",
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<int> delete(IMappable item) {
+    return _db.delete(
+      item.tableName,
+      where: "${item.idColumnName} = ?",
+      whereArgs: [item.id],
+    );
   }
 }

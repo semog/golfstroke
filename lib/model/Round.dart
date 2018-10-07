@@ -10,15 +10,17 @@ class Round implements IMappable {
   String idColumnName = columnRoundId;
   int id;
   DateTime date;
-  int courseId;
+  int slope;
+  double rating;
   List<Hole> holes;
+
   Hole currentHole;
   int _currentHoleIndex = 0;
   int get currentHoleIndex => _currentHoleIndex;
   set currentHoleIndex(int index) {
     _currentHoleIndex = min(max(0, index), maxHoles - 1);
     setCurrentHole();
-    save();
+    appDb.save(this);
   }
 
   int get currentStrokeCount => currentHole.strokes;
@@ -29,33 +31,29 @@ class Round implements IMappable {
     return accumulator;
   }
 
-  Round(int ownerCourseId) {
-    id = getId();
+  Round() {
     date = DateTime.now();
-    courseId = ownerCourseId;
-    int holeNum = 1;
-    holes = List<Hole>.generate(maxHoles, (_) => Hole(id, holeNum++));
+    slope = defaultSlope;
+    rating = defaultRating;
+    holes = List<Hole>.generate(maxHoles, (index) => Hole(this, index + 1));
     setCurrentHole();
   }
 
   Round.fromMap(Map<String, dynamic> map) {
-    id = map[columnRoundId];
+    id = map[idColumnName];
     date = DateTime.tryParse(map[columnRoundDate]);
-    courseId = map[columnRoundCourseId];
+    slope = map[columnRoundSlope];
+    rating = map[columnRoundRating];
     _currentHoleIndex = map[columnRoundCurrentHole];
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      columnRoundId: id,
-      columnRoundDate: date.toIso8601String(),
-      columnRoundCourseId: courseId,
-      columnRoundCurrentHole: _currentHoleIndex
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        columnRoundId: id,
+        columnRoundDate: date.toIso8601String(),
+        columnRoundSlope: slope,
+        columnRoundRating: rating,
+        columnRoundCurrentHole: _currentHoleIndex,
+      };
 
   void setCurrentHole() => currentHole = holes[_currentHoleIndex];
-  void save() {
-    appDb.updateItem(this);
-  }
 }

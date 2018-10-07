@@ -2,39 +2,37 @@ import 'dart:math';
 
 import 'package:golfstroke/database/dbutils.dart';
 import 'package:golfstroke/model/IMappable.dart';
+import 'package:golfstroke/model/Round.dart';
 
 class Hole implements IMappable {
   String tableName = tableHole;
   String idColumnName = columnHoleId;
   int id;
-  int roundId;
-  int hole;
+  Round round;
+  int _hole;
+  int get hole => _hole;
   int _strokes;
   int get strokes => _strokes;
   set strokes(int newStrokes) {
     _strokes = max(newStrokes, 0);
-    save();
+    appDb.save(this);
   }
 
-  Hole(int ownerRoundId, int holeNum) {
-    id = getId();
-    roundId = ownerRoundId;
-    hole = holeNum;
-    strokes = 0;
+  Hole(this.round, this._hole) {
+    _strokes = 0;
   }
 
-  Hole.fromMap(Map<String, dynamic> map) {
-    id = map[columnHoleId];
-    roundId = map[columnHoleRoundId];
-    hole = map[columnHoleHole];
+  Hole.fromMap(Round ownerRound, Map<String, dynamic> map) {
+    round = ownerRound;
+    id = map[idColumnName];
+    _hole = map[columnHoleHole];
     _strokes = map[columnHoleStrokeCount];
   }
 
-  Map<String, dynamic> toMap() {
-    return {columnHoleId: id, columnHoleRoundId: roundId, columnHoleHole: hole, columnHoleStrokeCount: _strokes};
-  }
-
-  void save() {
-    appDb.updateItem(this);
-  }
+  Map<String, dynamic> toMap() => {
+        columnHoleId: id,
+        columnHoleRoundId: round.id,
+        columnHoleHole: _hole,
+        columnHoleStrokeCount: _strokes,
+      };
 }

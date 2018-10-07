@@ -21,9 +21,9 @@ class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
   bool _loadData() {
     if (!_loadedData && null != appDb) {
       _loadedData = true;
-      appDb.getLastRound().then((roundArg) => setState(() {
-            round = roundArg;
-          }));
+      setState(() {
+        round = appDb.getRound(appDb.lastRound.value);
+      });
     }
     return _initialized;
   }

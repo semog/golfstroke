@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:golfstroke/CurrentRoundPage.dart';
+import 'package:golfstroke/RoundsPage.dart';
 import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/database/dbutils.dart';
 
@@ -39,7 +39,7 @@ class _GolfStrokeAppState extends State<GolfStrokeApp> {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: CurrentRoundPage(),
+      home: RoundsPage(),
     );
   }
 }

@@ -1,28 +1,33 @@
 import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/utils.dart';
 
-final String databaseStrokeCounts = "strokecounts.db";
+const String databaseStrokeCounts = "strokecounts.db";
 
-final String tableVersion = "versioninfo";
-final String columnVersion = "version";
+const String tableVersion = "versioninfo";
+const String columnVersion = "version";
 
-final String tableRound = "rounds";
-final String columnRoundId = "_id";
-final String columnRoundCourseId = "courseId";
-final String columnRoundDate = "date";
+const String tableSetting = "settings";
+const String columnSettingId = "_id";
+const String columnSettingName = "name";
+const String columnSettingValue = "value";
+const String indexSettingName = "settingnameIdx";
 
-final String tableLastRound = "lastround";
-final String columnLastRoundId = "_id";
-final String columnLastRoundRoundId = "roundId";
-final String columnRoundCurrentHole = "currentHole";
+const String tableRound = "rounds";
+const String columnRoundId = "_id";
+const String columnRoundDate = "date";
+const String columnRoundSlope = "slope";
+const String columnRoundRating = "rating";
+const String columnRoundCurrentHole = "currentHole";
 
-final String tableHole = "holes";
-final String columnHoleId = "_id";
-final String columnHoleRoundId = "roundId";
-final String columnHoleHole = "hole";
-final String columnHoleStrokeCount = "strokes";
+const String tableHole = "holes";
+const String columnHoleId = "_id";
+const String columnHoleRoundId = "roundId";
+const String columnHoleHole = "hole";
+const String columnHoleStrokeCount = "strokes";
+const String indexHoleRoundId = "holeroundidIdx";
 
-final String indexHoleRoundHole = "holeroundholeIdx";
+///  Settings
+const String settingLastRound = "lastround";
 
 // TODO: Retrieve Id from database.
 int _nextId = totalMilliseconds(DateTime.now());
