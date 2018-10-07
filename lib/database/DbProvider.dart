@@ -67,7 +67,7 @@ $columnHoleStrokeCount integer not null)''');
   }
 
   _loadSettings() async {
-    lastRound = await getSetting(settingLastRound, 0);
+    lastRound = await getSetting<int>(settingLastRound, 0);
   }
 
   _loadRounds() async {

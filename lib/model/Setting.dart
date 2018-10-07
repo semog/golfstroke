@@ -18,7 +18,7 @@ class Setting<T> implements IMappable {
   Setting.fromMap(Map<String, dynamic> map) {
     id = map[idColumnName];
     name = map[columnSettingName];
-    _value = _tryParse(map[columnSettingValue]);
+    _value = _tryParse<T>(map[columnSettingValue]);
   }
 
   Map<String, dynamic> toMap() => {
@@ -28,4 +28,9 @@ class Setting<T> implements IMappable {
       };
 }
 
-T _tryParse<T>(String data) => (T is int) ? int.tryParse(data) as T : data as T;
+T _tryParse<T>(String data) => _parseFuncs[T](data);
+
+Map<Type, Function> _parseFuncs = <Type, Function>{
+  int: ((String x) => int.tryParse(x)),
+  String: ((String x) => x),
+};
