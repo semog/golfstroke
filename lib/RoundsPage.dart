@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:golfstroke/AmbientModeState.dart';
-import 'package:golfstroke/database/DbUtils.dart';
+import 'package:golfstroke/Constants.dart';
 import 'package:golfstroke/LoadingPage.dart';
+import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Round.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +18,25 @@ class RoundsPage extends StatefulWidget {
 // so that it can call setState() by default.
 class _RoundsPageState extends AmbientModeState<RoundsPage> {
   var _dateFormatter = new DateFormat('yyyy-MM-dd');
+  var _listViewController = ScrollController();
+  bool _showFAB = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _listViewController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _listViewController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    _showFAB = (_listViewController.position.userScrollDirection == ScrollDirection.forward);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,28 +45,33 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
     }
     return Scaffold(
       backgroundColor: Colors.black,
-      body: roundsList,
+      body: _roundsList,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          var round;
-          setState(() => round = appDb.createRound());
-
-          // TODO: Navigate to CurrentRound
-        },
-        tooltip: 'Increment',
-        child: Icon(
-          Icons.add_circle_outline,
-          color: Colors.blue[300],
-          size: 50.0,
-        ),
-        backgroundColor: Colors.black,
-        elevation: 2.0,
-      ),
+      floatingActionButton: _buildFAB(context),
     );
   }
 
-  Widget get roundsList {
+  Widget _buildFAB(BuildContext context) {
+    if (!_showFAB) {
+      return Container();
+    }
+    return FloatingActionButton(
+      onPressed: () {
+        appDb.lastRound.value = appDb.createRound().id;
+        Navigator.of(context).pushNamed(currentRoundPageRoute);
+      },
+      tooltip: 'Add New Round',
+      child: Icon(
+        Icons.add_circle_outline,
+        color: Colors.blue[300],
+        size: 50.0,
+      ),
+      backgroundColor: Colors.black,
+      elevation: 2.0,
+    );
+  }
+
+  Widget get _roundsList {
     if (appDb.rounds.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -59,13 +85,16 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
       );
     }
     return ListView.builder(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.fromLTRB(10.0, 20.0, 0.0, 30.0),
+      controller: _listViewController,
       itemCount: appDb.rounds.length,
       itemBuilder: (context, index) {
         Round round = appDb.rounds[index];
         return ListTile(
+          contentPadding: EdgeInsets.all(0.0),
           leading: Icon(
             Icons.golf_course,
+            size: 35.0,
             color: Colors.blue[200],
           ),
           title: Text(
@@ -73,12 +102,12 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
             style: TextStyle(color: Colors.white),
           ),
           subtitle: Text(
-            "${round.currentScore} (${round.rating}/${round.slope})",
+            "Score: ${round.currentScore} (${round.rating}/${round.slope})",
             style: TextStyle(color: Colors.blueGrey[300]),
           ),
           onTap: () {
             appDb.lastRound.value = round.id;
-            // TODO: Navigate to CurrentRound
+            Navigator.of(context).pushNamed(currentRoundPageRoute);
           },
           onLongPress: () {
             // TODO: Option to delete or edit (slope/rating) round

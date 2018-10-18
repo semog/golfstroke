@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golfstroke/RoundsPage.dart';
+import 'package:golfstroke/Routes.dart';
 import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/IStateUpdate.dart';
@@ -48,6 +49,7 @@ class _GolfStrokeAppState extends State<GolfStrokeApp> implements IStateUpdate {
         primarySwatch: Colors.blue,
       ),
       home: RoundsPage(),
+      routes: routes,
     );
   }
 }
