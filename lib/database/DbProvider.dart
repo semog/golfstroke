@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:golfstroke/constants.dart';
+import 'package:golfstroke/database/DBCreator.dart';
 import 'package:golfstroke/database/dbutils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
+import 'package:golfstroke/model/IStateUpdate.dart';
 import 'package:golfstroke/model/Round.dart';
 import 'package:golfstroke/model/Setting.dart';
 import 'package:path/path.dart';
@@ -10,50 +13,25 @@ import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
   Database _db;
+  int _loadHolesCounter = -1;
+
+  Setting<int> lastSlope;
+  Setting<double> lastRating;
   Setting<int> lastRound;
   List<Round> rounds;
 
-  Future<DbProvider> open() async {
+  static Future<DbProvider> open(IStateUpdate stateUpdate) async {
+    DbProvider provider = DbProvider();
     // Get a location using getDatabasesPath
     String fulldbpath = join(await getDatabasesPath(), databaseStrokeCounts);
-    _db = await openDatabase(fulldbpath, version: 1, onCreate: createDb, onUpgrade: upgradeDb);
-    await _loadSettings();
-    await _loadRounds();
-    return this;
+    provider._db = await openDatabase(fulldbpath, version: 1, onCreate: DbCreator.createDb, onUpgrade: DbCreator.upgradeDb);
+    await provider._loadSettings();
+    await provider._loadRounds();
+    await provider._loadHoles(stateUpdate);
+    return provider;
   }
 
-  createDb(Database db, int version) {
-    db.execute('''create table $tableSetting (
-$columnSettingId integer primary key,
-$columnSettingName text not null,
-$columnSettingValue text)''');
-    db.execute("create unique index $indexSettingName on $tableSetting ($columnSettingName)");
-
-    db.execute('''create table $tableRound (
-$columnRoundId integer primary key,
-$columnRoundDate text not null,
-$columnRoundSlope integer,
-$columnRoundRating integer,
-$columnRoundCurrentHole integer not null)''');
-
-    db.execute('''create table $tableHole (
-$columnHoleId integer primary key,
-$columnHoleRoundId integer not null,
-$columnHoleHole integer not null,
-$columnHoleStrokeCount integer not null)''');
-    db.execute("create index $indexHoleRoundId on $tableHole ($columnHoleRoundId)");
-  }
-
-  upgradeDb(Database db, int oldVersion, int newVersion) {
-    // Perform any upgrades from old versions.
-    if (1 == oldVersion && 2 == newVersion) {
-      // Do updates as needed
-    } else if (2 == oldVersion && 3 == newVersion) {
-      // Do updates as needed
-    }
-  }
-
-  Future close() => _db.close();
+  close() => _db.close();
 
   Future<Setting<T>> getSetting<T>(String settingname, T defaultVal) async {
     List<Map<String, dynamic>> maps = await _db.query(tableSetting,
@@ -67,6 +45,8 @@ $columnHoleStrokeCount integer not null)''');
   }
 
   _loadSettings() async {
+    lastSlope = await getSetting<int>(settingLastSlope, defaultSlope);
+    lastRating = await getSetting<double>(settingLastSlope, defaultRating);
     lastRound = await getSetting<int>(settingLastRound, 0);
   }
 
@@ -79,16 +59,21 @@ $columnHoleStrokeCount integer not null)''');
       columnRoundCurrentHole,
     ]);
     rounds = List<Round>();
-    maps.forEach((record) async {
+    maps.forEach((record) {
       Round round = Round.fromMap(record);
       rounds.add(round);
-      await _loadHoles(round);
     });
   }
 
-  Round getRound(int id) => rounds.firstWhere((round) => round.id == id, orElse: null);
+  _loadHoles(IStateUpdate stateUpdate) async {
+    _loadHolesCounter = rounds.length;
+    rounds.forEach((round) => _loadHolesForRound(round).whenComplete(() {
+          _loadHolesCounter--;
+          stateUpdate.updateState();
+        }));
+  }
 
-  _loadHoles(Round round) async {
+  _loadHolesForRound(Round round) async {
     round.holes = await _getHoles(round);
     round.setCurrentHole();
   }
@@ -103,6 +88,10 @@ $columnHoleStrokeCount integer not null)''');
     maps.forEach((record) => holes.add(Hole.fromMap(round, record)));
     return holes;
   }
+
+  bool get allHolesLoaded => 0 == _loadHolesCounter;
+
+  Round getRound(int id) => rounds.firstWhere((round) => round.id == id, orElse: null);
 
   Round createRound() {
     var round = Round();

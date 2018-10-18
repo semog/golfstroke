@@ -15,12 +15,11 @@ class RoundsPage extends StatefulWidget {
 // event callbacks. By default pass in the State object
 // so that it can call setState() by default.
 class _RoundsPageState extends AmbientModeState<RoundsPage> {
-  bool get _initialized => null != appDb && null != appDb.rounds;
   var _dateFormatter = new DateFormat('yyyy-MM-dd');
 
   @override
   Widget build(BuildContext context) {
-    if (!_initialized) {
+    if (!dbInitialized) {
       return loadingPage;
     }
     return Scaffold(
@@ -82,7 +81,7 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
             // TODO: Navigate to CurrentRound
           },
           onLongPress: () {
-            // TODO: Option to delete round
+            // TODO: Option to delete or edit (slope/rating) round
           },
         );
       },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:golfstroke/RoundsPage.dart';
 import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/model/IStateUpdate.dart';
 
 void main() => runApp(GolfStrokeApp());
 
@@ -10,7 +11,7 @@ class GolfStrokeApp extends StatefulWidget {
   _GolfStrokeAppState createState() => _GolfStrokeAppState();
 }
 
-class _GolfStrokeAppState extends State<GolfStrokeApp> {
+class _GolfStrokeAppState extends State<GolfStrokeApp> implements IStateUpdate {
   @override
   void initState() {
     super.initState();
@@ -23,13 +24,20 @@ class _GolfStrokeAppState extends State<GolfStrokeApp> {
     super.dispose();
   }
 
-  void _openDatabase() {
-    DbProvider().open().then((dbArg) => setState(() {
-          appDb = dbArg;
-        }));
+  DbProvider dbLoader;
+
+  void _openDatabase() async {
+    dbLoader = await DbProvider.open(this);
   }
 
   void _closeDatabase() => appDb?.close();
+
+  @override
+  void updateState() {
+    if (dbLoader?.allHolesLoaded ?? false) {
+      setState(() => appDb = dbLoader);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

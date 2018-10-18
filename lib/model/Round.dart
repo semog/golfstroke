@@ -33,8 +33,8 @@ class Round implements IMappable {
 
   Round() {
     date = DateTime.now();
-    slope = defaultSlope;
-    rating = defaultRating;
+    slope = appDb.lastSlope.value;
+    rating = appDb.lastRating.value;
     holes = List<Hole>.generate(maxHoles, (index) => Hole(this, index + 1));
     setCurrentHole();
   }

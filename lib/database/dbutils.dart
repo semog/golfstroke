@@ -27,6 +27,8 @@ const String columnHoleStrokeCount = "strokes";
 const String indexHoleRoundId = "holeroundidIdx";
 
 ///  Settings
+const String settingLastSlope = "lastslope";
+const String settingLastRating = "lastrating";
 const String settingLastRound = "lastround";
 
 // TODO: Retrieve Id from database.
@@ -34,3 +36,4 @@ int _nextId = totalMilliseconds(DateTime.now());
 int getId() => _nextId++;
 
 DbProvider appDb;
+bool get dbInitialized => null != appDb;

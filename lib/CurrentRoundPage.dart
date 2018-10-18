@@ -19,11 +19,9 @@ class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
   _CurrentRoundPageState() : super.stayOnAmbient();
 
   bool _loadData() {
-    if (!_loadedData && null != appDb) {
+    if (!_loadedData && dbInitialized) {
       _loadedData = true;
-      setState(() {
-        round = appDb.getRound(appDb.lastRound.value);
-      });
+      setState(() => round = appDb.getRound(appDb.lastRound.value));
     }
     return _initialized;
   }
@@ -35,14 +33,8 @@ class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
   final _buttonColor = Colors.blue[300];
 
   Color _hideableColor(Color color) => isAmbient ? Colors.black : color;
-
-  void _incrementStrokes() => setState(() {
-        round.currentHole.strokes++;
-      });
-
-  void _decrementStrokes() => setState(() {
-        round.currentHole.strokes--;
-      });
+  void _incrementStrokes() => setState(() => round.currentHole.strokes++);
+  void _decrementStrokes() => setState(() => round.currentHole.strokes--);
 
   void _nextHole() => setState(() {
         round.currentHoleIndex++;
