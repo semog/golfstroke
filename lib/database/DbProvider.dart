@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:golfstroke/constants.dart';
-import 'package:golfstroke/database/DBCreator.dart';
-import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/Constants.dart';
+import 'package:golfstroke/database/DbCreator.dart';
+import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
 import 'package:golfstroke/model/IStateUpdate.dart';

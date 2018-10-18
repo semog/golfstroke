@@ -1,5 +1,5 @@
 import 'package:golfstroke/database/DbProvider.dart';
-import 'package:golfstroke/utils.dart';
+import 'package:golfstroke/Utils.dart';
 
 const String databaseStrokeCounts = "strokecounts.db";
 

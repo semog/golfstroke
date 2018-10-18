@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:golfstroke/constants.dart';
-import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/Constants.dart';
+import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
 

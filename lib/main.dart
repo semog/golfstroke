@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golfstroke/RoundsPage.dart';
 import 'package:golfstroke/database/DbProvider.dart';
-import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/IStateUpdate.dart';
 
 void main() => runApp(GolfStrokeApp());

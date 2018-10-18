@@ -1,4 +1,4 @@
-import 'package:golfstroke/database/dbutils.dart';
+import 'package:golfstroke/database/DbUtils.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbCreator {
