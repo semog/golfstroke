@@ -3,7 +3,7 @@ import 'package:golfstroke/RoundsPage.dart';
 import 'package:golfstroke/Routes.dart';
 import 'package:golfstroke/database/DbProvider.dart';
 import 'package:golfstroke/database/DbUtils.dart';
-import 'package:golfstroke/model/IStateUpdate.dart';
+import 'package:golfstroke/model/IDbStateUpdate.dart';
 
 void main() => runApp(GolfStrokeApp());
 
@@ -12,7 +12,7 @@ class GolfStrokeApp extends StatefulWidget {
   _GolfStrokeAppState createState() => _GolfStrokeAppState();
 }
 
-class _GolfStrokeAppState extends State<GolfStrokeApp> implements IStateUpdate {
+class _GolfStrokeAppState extends State<GolfStrokeApp> implements IDbStateUpdate {
   @override
   void initState() {
     super.initState();
@@ -25,18 +25,16 @@ class _GolfStrokeAppState extends State<GolfStrokeApp> implements IStateUpdate {
     super.dispose();
   }
 
-  DbProvider dbLoader;
-
   void _openDatabase() async {
-    dbLoader = await DbProvider.open(this);
+    DbProvider.open(this);
   }
 
   void _closeDatabase() => appDb?.close();
 
   @override
-  void updateState() {
-    if (dbLoader?.allHolesLoaded ?? false) {
-      setState(() => appDb = dbLoader);
+  void updateState(DbProvider db) {
+    if (db.finishedLoading) {
+      setState(() => appDb = db);
     }
   }
 

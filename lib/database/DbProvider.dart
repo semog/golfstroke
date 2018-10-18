@@ -5,7 +5,7 @@ import 'package:golfstroke/database/DbCreator.dart';
 import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
-import 'package:golfstroke/model/IStateUpdate.dart';
+import 'package:golfstroke/model/IDbStateUpdate.dart';
 import 'package:golfstroke/model/Round.dart';
 import 'package:golfstroke/model/Setting.dart';
 import 'package:path/path.dart';
@@ -20,10 +20,15 @@ class DbProvider {
   Setting<int> lastRound;
   List<Round> rounds;
 
-  static Future<DbProvider> open(IStateUpdate stateUpdate) async {
+  static Future<DbProvider> open(IDbStateUpdate stateUpdate) async {
     DbProvider provider = DbProvider();
     String fulldbpath = join(await getDatabasesPath(), databaseStrokeCounts);
-    provider._db = await openDatabase(fulldbpath, version: 1, onCreate: DbCreator.createDb, onUpgrade: DbCreator.upgradeDb);
+    provider._db = await openDatabase(
+      fulldbpath,
+      version: 1,
+      onCreate: DbCreator.createDb,
+      onUpgrade: DbCreator.upgradeDb,
+    );
     await provider._loadSettings();
     await provider._loadRounds();
     await provider._loadHoles(stateUpdate);
@@ -64,12 +69,14 @@ class DbProvider {
     });
   }
 
-  _loadHoles(IStateUpdate stateUpdate) async {
+  _loadHoles(IDbStateUpdate stateUpdate) async {
     _loadHolesCounter = rounds.length;
     rounds.forEach((round) => _loadHolesForRound(round).whenComplete(() {
           _loadHolesCounter--;
-          stateUpdate.updateState();
+          stateUpdate.updateState(this);
         }));
+    // Update the state at least once in case there are no holes.
+    stateUpdate.updateState(this);
   }
 
   _loadHolesForRound(Round round) async {
@@ -88,7 +95,7 @@ class DbProvider {
     return holes;
   }
 
-  bool get allHolesLoaded => 0 == _loadHolesCounter;
+  bool get finishedLoading => 0 == _loadHolesCounter;
 
   Round getRound(int id) => rounds.firstWhere((round) => round.id == id, orElse: null);
 
