@@ -22,7 +22,6 @@ class DbProvider {
 
   static Future<DbProvider> open(IStateUpdate stateUpdate) async {
     DbProvider provider = DbProvider();
-    // Get a location using getDatabasesPath
     String fulldbpath = join(await getDatabasesPath(), databaseStrokeCounts);
     provider._db = await openDatabase(fulldbpath, version: 1, onCreate: DbCreator.createDb, onUpgrade: DbCreator.upgradeDb);
     await provider._loadSettings();
