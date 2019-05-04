@@ -62,6 +62,9 @@ class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
           ),
       child: GestureDetector(
         key: Key(round.currentHole.hashCode.toString()),
+        onHorizontalDragEnd: (details) {
+          Navigator.of(context).pop();
+        },
         onVerticalDragEnd: (details) {
           if (details.primaryVelocity > 0) {
             _previousHole();

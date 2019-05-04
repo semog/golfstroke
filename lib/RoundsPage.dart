@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:golfstroke/AmbientModeState.dart';
@@ -34,8 +35,12 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
   }
 
   void _scrollListener() {
-    _showFAB = (_listViewController.position.userScrollDirection == ScrollDirection.forward);
-    setState(() {});
+    var direction = _listViewController.position.userScrollDirection;
+    if (direction == ScrollDirection.forward) {
+      setState(() => _showFAB = true);
+    } else if (direction == ScrollDirection.reverse) {
+      setState(() => _showFAB = false);
+    }
   }
 
   @override
@@ -45,33 +50,29 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
     }
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _roundsList,
+      body: _buildRoundsList(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _buildFAB(context),
-    );
-  }
-
-  Widget _buildFAB(BuildContext context) {
-    if (!_showFAB) {
-      return Container();
-    }
-    return FloatingActionButton(
-      onPressed: () {
-        appDb.lastRound.value = appDb.createRound().id;
-        Navigator.of(context).pushNamed(currentRoundPageRoute);
-      },
-      tooltip: 'Add New Round',
-      child: Icon(
-        Icons.add_circle_outline,
-        color: Colors.blue[300],
-        size: 50.0,
+      floatingActionButton: Visibility(
+        visible: _showFAB,
+        child: FloatingActionButton(
+          onPressed: () {
+            appDb.lastRound.value = appDb.createRound().id;
+            Navigator.of(context).pushNamed(currentRoundPageRoute);
+          },
+          tooltip: 'Add New Round',
+          child: Icon(
+            Icons.add_circle_outline,
+            color: Colors.blue[300],
+            size: 50.0,
+          ),
+          backgroundColor: Colors.black,
+          elevation: 2.0,
+        ),
       ),
-      backgroundColor: Colors.black,
-      elevation: 2.0,
     );
   }
 
-  Widget get _roundsList {
+  Widget _buildRoundsList(BuildContext context) {
     if (appDb.rounds.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -90,28 +91,48 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
       itemCount: appDb.rounds.length,
       itemBuilder: (context, index) {
         Round round = appDb.rounds[index];
-        return ListTile(
-          contentPadding: EdgeInsets.all(0.0),
-          leading: Icon(
-            Icons.golf_course,
-            size: 35.0,
-            color: Colors.blue[200],
-          ),
-          title: Text(
-            "Round ${_dateFormatter.format(round.date)}",
-            style: TextStyle(color: Colors.white),
-          ),
-          subtitle: Text(
-            "Score: ${round.currentScore} (${round.rating}/${round.slope})",
-            style: TextStyle(color: Colors.blueGrey[300]),
-          ),
-          onTap: () {
-            appDb.lastRound.value = round.id;
-            Navigator.of(context).pushNamed(currentRoundPageRoute);
+        return Dismissible(
+          key: Key(round.id.toString()),
+          onDismissed: (direction) {
+            // Remove the item
+            setState(() {
+              _showFAB = true;
+              appDb.deleteRound(round);
+            });
+            // Show a snackbar.
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "Round ${_dateFormatter.format(round.date)} deleted",
+                textAlign: TextAlign.center,
+              ),
+              duration: Duration(seconds: 2),
+            ));
           },
-          onLongPress: () {
-            // TODO: Option to delete or edit (slope/rating) round
-          },
+          // Show a red background as the item is swiped away
+          background: Container(color: Colors.red),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(0.0),
+            leading: Icon(
+              Icons.golf_course,
+              size: 35.0,
+              color: Colors.blue[200],
+            ),
+            title: Text(
+              "Round ${_dateFormatter.format(round.date)}",
+              style: TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              "Score: ${round.currentScore} (${round.rating}/${round.slope})",
+              style: TextStyle(color: Colors.blueGrey[300]),
+            ),
+            onTap: () {
+              appDb.lastRound.value = round.id;
+              Navigator.of(context).pushNamed(currentRoundPageRoute);
+            },
+            onLongPress: () {
+              // TODO: Option to delete or edit (slope/rating) round
+            },
+          ),
         );
       },
     );

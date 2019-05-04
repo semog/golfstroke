@@ -107,6 +107,12 @@ class DbProvider {
     return round;
   }
 
+  deleteRound(Round round) {
+    round.holes.forEach((hole) => delete(hole));
+    delete(round);
+    rounds.remove(round);
+  }
+
   Future<int> save(IMappable item) {
     if (null == item.id) {
       item.id = getId();
