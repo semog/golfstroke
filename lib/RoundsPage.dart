@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -72,6 +73,12 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
     );
   }
 
+  Map<DismissDirection, double> _dismissThresholds() {
+    Map<DismissDirection, double> map = new Map<DismissDirection, double>();
+    map.putIfAbsent(DismissDirection.horizontal, () => 0.3);
+    return map;
+  }
+
   Widget _buildRoundsList(BuildContext context) {
     if (appDb.rounds.isEmpty) {
       return Column(
@@ -93,6 +100,8 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
         Round round = appDb.rounds[index];
         return Dismissible(
           key: Key(round.id.toString()),
+          direction: DismissDirection.horizontal,
+          dismissThresholds: _dismissThresholds(),
           onDismissed: (direction) {
             // Remove the item
             setState(() {
@@ -100,16 +109,31 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               appDb.deleteRound(round);
             });
             // Show a snackbar.
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Round ${_dateFormatter.format(round.date)} deleted",
-                textAlign: TextAlign.center,
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Round ${_dateFormatter.format(round.date)} deleted",
+                  textAlign: TextAlign.center,
+                ),
+                duration: Duration(seconds: 2),
               ),
-              duration: Duration(seconds: 2),
-            ));
+            );
           },
           // Show a red background as the item is swiped away
-          background: Container(color: Colors.red),
+          background: Container(
+            color: Colors.redAccent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: null,
+                  icon: Icon(Icons.delete),
+                  disabledColor: Colors.black,
+                  padding: EdgeInsets.only(right: 10.0),
+                ),
+              ],
+            ),
+          ),
           child: ListTile(
             contentPadding: EdgeInsets.all(0.0),
             leading: Icon(
