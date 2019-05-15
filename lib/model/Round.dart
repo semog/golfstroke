@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:golfstroke/Constants.dart';
+import 'package:golfstroke/Utils.dart';
 import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Hole.dart';
 import 'package:golfstroke/model/IMappable.dart';
@@ -14,6 +15,7 @@ class Round implements IMappable {
   double rating;
   List<Hole> holes;
 
+  String get name => "Round ${dateFormatter.format(date)}";
   Hole currentHole;
   int _currentHoleIndex = 0;
   int get currentHoleIndex => _currentHoleIndex;

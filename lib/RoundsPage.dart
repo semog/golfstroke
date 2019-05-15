@@ -7,7 +7,6 @@ import 'package:golfstroke/Constants.dart';
 import 'package:golfstroke/LoadingPage.dart';
 import 'package:golfstroke/database/DbUtils.dart';
 import 'package:golfstroke/model/Round.dart';
-import 'package:intl/intl.dart';
 
 class RoundsPage extends StatefulWidget {
   @override
@@ -19,7 +18,6 @@ class RoundsPage extends StatefulWidget {
 // event callbacks. By default pass in the State object
 // so that it can call setState() by default.
 class _RoundsPageState extends AmbientModeState<RoundsPage> {
-  var _dateFormatter = new DateFormat('yyyy-MM-dd');
   var _listViewController = ScrollController();
   bool _showFAB = true;
 
@@ -111,15 +109,18 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
             // Show a snackbar.
             Scaffold.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  "Round ${_dateFormatter.format(round.date)} deleted",
-                  textAlign: TextAlign.center,
+                content: Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Text(
+                    "${round.name} deleted",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 duration: Duration(seconds: 2),
               ),
             );
           },
-          // Show a red background as the item is swiped away
+          // Show a red background with trash can icon as the item is swiped away
           background: Container(
             color: Colors.redAccent,
             child: Row(
@@ -127,9 +128,12 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               children: [
                 IconButton(
                   onPressed: null,
-                  icon: Icon(Icons.delete),
-                  disabledColor: Colors.black,
-                  padding: EdgeInsets.only(right: 10.0),
+                  icon: Icon(
+                    Icons.delete,
+                    size: 50.0,
+                    color: Colors.black,
+                  ),
+                  padding: EdgeInsets.only(right: 45.0),
                 ),
               ],
             ),
@@ -142,7 +146,7 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               color: Colors.blue[200],
             ),
             title: Text(
-              "Round ${_dateFormatter.format(round.date)}",
+              round.name,
               style: TextStyle(color: Colors.white),
             ),
             subtitle: Text(
@@ -154,7 +158,8 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               Navigator.of(context).pushNamed(currentRoundPageRoute);
             },
             onLongPress: () {
-              // TODO: Option to delete or edit (slope/rating) round
+              appDb.lastRound.value = round.id;
+              Navigator.of(context).pushNamed(editRoundPageRoute);
             },
           ),
         );

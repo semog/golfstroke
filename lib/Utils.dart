@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 int totalMilliseconds(DateTime dt) => dt.difference(DateTime.fromMillisecondsSinceEpoch(0)).inMilliseconds;
 
 String fmtHoleNum(int holeNum) {
@@ -10,3 +12,5 @@ String fmtHoleNum(int holeNum) {
   }
   return "${holeNum}th";
 }
+
+var dateFormatter = new DateFormat('yyyy-MM-dd');

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:golfstroke/AmbientModeState.dart';
-import 'package:golfstroke/database/DbUtils.dart';
+import 'package:golfstroke/BaseRoundPage.dart';
 import 'package:golfstroke/LoadingPage.dart';
-import 'package:golfstroke/model/Round.dart';
 import 'package:golfstroke/Utils.dart';
 
 class CurrentRoundPage extends StatefulWidget {
@@ -10,22 +8,7 @@ class CurrentRoundPage extends StatefulWidget {
   _CurrentRoundPageState createState() => _CurrentRoundPageState();
 }
 
-class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
-  bool _loadedData = false;
-  Round round;
-
-  bool get _initialized => null != round;
-
-  _CurrentRoundPageState() : super.stayOnAmbient();
-
-  bool _loadData() {
-    if (!_loadedData && dbInitialized) {
-      _loadedData = true;
-      setState(() => round = appDb.getRound(appDb.lastRound.value));
-    }
-    return _initialized;
-  }
-
+class _CurrentRoundPageState extends BaseRoundPageState<CurrentRoundPage> {
   double get _strokeCountPadding => round.currentStrokeCount > 9 ? 21.0 : 1.0;
   double get _cumulativePadding => round.currentStrokeCount > 9 ? 21.0 : 0.0;
   double get _strokeFontSize => round.currentStrokeCount > 9 ? 70.0 : 105.0;
@@ -50,7 +33,7 @@ class _CurrentRoundPageState extends AmbientModeState<CurrentRoundPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loadData()) {
+    if (!loadData()) {
       return loadingPage;
     }
     return AnimatedSwitcher(
