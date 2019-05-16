@@ -15,12 +15,14 @@ class Round implements IMappable {
   int get slope => _slope;
   set slope(int newSlope) {
     _slope = max(newSlope, 1);
+    appDb.lastSlope.value = _slope;
     appDb.save(this);
   }
   double _rating;
   double get rating => _rating;
   set rating(double newRating){
     _rating = max(newRating, 1.0);
+    appDb.lastRating.value = _rating;
     appDb.save(this);
   }
   List<Hole> holes;
