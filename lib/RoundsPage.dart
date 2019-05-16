@@ -133,13 +133,13 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
                     size: 50.0,
                     color: Colors.black,
                   ),
-                  padding: EdgeInsets.only(right: 45.0),
+                  padding: const EdgeInsets.only(right: 45.0),
                 ),
               ],
             ),
           ),
           child: ListTile(
-            contentPadding: EdgeInsets.all(0.0),
+            contentPadding: const EdgeInsets.all(0.0),
             leading: Icon(
               Icons.golf_course,
               size: 35.0,
@@ -150,7 +150,7 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               style: TextStyle(color: Colors.white),
             ),
             subtitle: Text(
-              "Hole: #${round.currentHoleIndex + 1}\nScore: ${round.currentScore} (${round.rating.toStringAsFixed(1)}/${round.slope})",
+              "Score: ${round.currentScore} (${round.rating.toStringAsFixed(1)}/${round.slope})",
               style: TextStyle(color: Colors.blueGrey[300]),
             ),
             onTap: () {
