@@ -32,5 +32,6 @@ T _tryParse<T>(String data) => _parseFuncs[T](data);
 
 Map<Type, Function> _parseFuncs = <Type, Function>{
   int: ((String x) => int.tryParse(x)),
+  double: ((String x) => double.tryParse(x)),
   String: ((String x) => x),
 };

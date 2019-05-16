@@ -11,6 +11,13 @@ class Round implements IMappable {
   String idColumnName = columnRoundId;
   int id;
   DateTime date;
+  String _name;
+  String get name => _name;
+  set name(String newName) {
+    _name = newName;
+    appDb.lastName.value = _name;
+    appDb.save(this);
+  }
   int _slope;
   int get slope => _slope;
   set slope(int newSlope) {
@@ -26,8 +33,6 @@ class Round implements IMappable {
     appDb.save(this);
   }
   List<Hole> holes;
-
-  String get name => "Round ${dateFormatter.format(date)}";
   Hole currentHole;
   int _currentHoleIndex = 0;
   int get currentHoleIndex => _currentHoleIndex;
@@ -47,6 +52,7 @@ class Round implements IMappable {
 
   Round() {
     date = DateTime.now();
+    _name = appDb.lastName.value ?? "Round ${dateFormatter.format(date)}";
     _slope = appDb.lastSlope.value;
     _rating = appDb.lastRating.value;
     holes = List<Hole>.generate(maxHoles, (index) => Hole(this, index + 1));
@@ -56,6 +62,7 @@ class Round implements IMappable {
   Round.fromMap(Map<String, dynamic> map) {
     id = map[idColumnName];
     date = DateTime.tryParse(map[columnRoundDate]);
+    _name = map[columnRoundName];
     _slope = map[columnRoundSlope];
     _rating = map[columnRoundRating];
     _currentHoleIndex = map[columnRoundCurrentHole];
@@ -64,8 +71,9 @@ class Round implements IMappable {
   Map<String, dynamic> toMap() => {
         columnRoundId: id,
         columnRoundDate: date.toIso8601String(),
+        columnRoundName: _name,
         columnRoundSlope: _slope,
-        columnRoundRating: _rating,
+        columnRoundRating: _rating.toStringAsFixed(1),
         columnRoundCurrentHole: _currentHoleIndex,
       };
 

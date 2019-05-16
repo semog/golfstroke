@@ -15,6 +15,7 @@ const String indexSettingName = "settingnameIdx";
 const String tableRound = "rounds";
 const String columnRoundId = "_id";
 const String columnRoundDate = "date";
+const String columnRoundName = "name";
 const String columnRoundSlope = "slope";
 const String columnRoundRating = "rating";
 const String columnRoundCurrentHole = "currentHole";
@@ -27,6 +28,7 @@ const String columnHoleStrokeCount = "strokes";
 const String indexHoleRoundId = "holeroundidIdx";
 
 ///  Settings
+const String settingLastName = "lastname";
 const String settingLastSlope = "lastslope";
 const String settingLastRating = "lastrating";
 const String settingLastRound = "lastround";

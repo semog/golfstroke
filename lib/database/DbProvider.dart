@@ -15,6 +15,7 @@ class DbProvider {
   Database _db;
   int _loadHolesCounter = -1;
 
+  Setting<String> lastName;
   Setting<int> lastSlope;
   Setting<double> lastRating;
   Setting<int> lastRound;
@@ -49,8 +50,9 @@ class DbProvider {
   }
 
   _loadSettings() async {
+    lastName = await getSetting<String>(settingLastName, null);
     lastSlope = await getSetting<int>(settingLastSlope, defaultSlope);
-    lastRating = await getSetting<double>(settingLastSlope, defaultRating);
+    lastRating = await getSetting<double>(settingLastRating, defaultRating);
     lastRound = await getSetting<int>(settingLastRound, 0);
   }
 
@@ -58,6 +60,7 @@ class DbProvider {
     List<Map<String, dynamic>> maps = await _db.query(tableRound, columns: [
       columnRoundId,
       columnRoundDate,
+      columnRoundName,
       columnRoundSlope,
       columnRoundRating,
       columnRoundCurrentHole,

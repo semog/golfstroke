@@ -12,6 +12,7 @@ $columnSettingValue text)''');
     db.execute('''create table $tableRound (
 $columnRoundId integer primary key,
 $columnRoundDate text not null,
+$columnRoundName text,
 $columnRoundSlope integer,
 $columnRoundRating integer,
 $columnRoundCurrentHole integer not null)''');

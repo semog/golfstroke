@@ -25,6 +25,7 @@ class _EditRoundPageState extends BaseRoundPageState<EditRoundPage> {
     if (!loadData()) {
       return loadingPage;
     }
+
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         Navigator.of(context).pop();
@@ -35,15 +36,24 @@ class _EditRoundPageState extends BaseRoundPageState<EditRoundPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              // TODO: Add ability to change Round Name from "Round <date>".
               Padding(
-                padding: const EdgeInsets.only(top: 30.0),
+                padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
                   "${round.name}",
                   style: TextStyle(color: Colors.blueGrey[300]),
                 ),
+                // child: TextField(
+                //   controller: TextEditingController("${round.name}"),
+                //   textAlign: TextAlign.center,
+                //   autocorrect: false,
+                //   onSubmitted: (newText) => round.name = newText,
+                //   decoration: InputDecoration(
+                //     hintText: "Course Name",
+                //   ),
+                //   style: TextStyle(color: Colors.blueGrey[300]),
+                // ),
               ),
-              Divider(color: Colors.blueAccent),
+              Divider(color: Colors.blueGrey[700]),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
