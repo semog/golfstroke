@@ -150,7 +150,7 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
               style: TextStyle(color: Colors.white),
             ),
             subtitle: Text(
-              "Score: ${round.currentScore} (${round.rating}/${round.slope})",
+              "Hole: #${round.currentHoleIndex + 1}\nScore: ${round.currentScore} (${round.rating.toStringAsFixed(1)}/${round.slope})",
               style: TextStyle(color: Colors.blueGrey[300]),
             ),
             onTap: () {

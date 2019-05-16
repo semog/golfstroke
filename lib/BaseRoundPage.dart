@@ -8,6 +8,8 @@ abstract class BaseRoundPageState<T extends StatefulWidget> extends AmbientModeS
   Round round;
 
   bool get _initialized => null != round;
+  final buttonColor = Colors.blue[300];
+  Color hideableColor(Color color) => isAmbient ? Colors.black : color;
 
   BaseRoundPageState() : super.stayOnAmbient();
 

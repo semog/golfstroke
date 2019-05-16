@@ -13,9 +13,7 @@ class _CurrentRoundPageState extends BaseRoundPageState<CurrentRoundPage> {
   double get _cumulativePadding => round.currentStrokeCount > 9 ? 21.0 : 0.0;
   double get _strokeFontSize => round.currentStrokeCount > 9 ? 70.0 : 105.0;
 
-  final _buttonColor = Colors.blue[300];
 
-  Color _hideableColor(Color color) => isAmbient ? Colors.black : color;
   void _incrementStrokes() => setState(() => round.currentHole.strokes++);
   void _decrementStrokes() => setState(() => round.currentHole.strokes--);
 
@@ -91,7 +89,7 @@ class _CurrentRoundPageState extends BaseRoundPageState<CurrentRoundPage> {
                       IconButton(
                         icon: Icon(Icons.remove_circle_outline),
                         iconSize: 50.0,
-                        color: _hideableColor(_buttonColor),
+                        color: hideableColor(buttonColor),
                         onPressed: _decrementStrokes,
                       ),
                       Text(
@@ -101,7 +99,7 @@ class _CurrentRoundPageState extends BaseRoundPageState<CurrentRoundPage> {
                       IconButton(
                         icon: Icon(Icons.add_circle_outline),
                         iconSize: 50.0,
-                        color: _hideableColor(_buttonColor),
+                        color: hideableColor(buttonColor),
                         onPressed: _incrementStrokes,
                       ),
                     ],
