@@ -116,7 +116,7 @@ class _RoundsPageState extends AmbientModeState<RoundsPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                duration: Duration(seconds: 2),
+                duration: Duration(seconds: 1),
               ),
             );
           },
